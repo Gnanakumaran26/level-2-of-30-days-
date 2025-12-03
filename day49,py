@@ -1,0 +1,23 @@
+import speedtest
+
+def test_speed():
+    st = speedtest.Speedtest()
+
+    print("\nTesting... Please wait...\n")
+
+    # Download speed
+    download = st.download() / 1_000_000  # Convert to Mbps
+    # Upload speed
+    upload = st.upload() / 1_000_000  # Convert to Mbps
+    # Ping
+    server = st.get_best_server()
+    ping = server['latency']
+
+    print("----- INTERNET SPEED TEST RESULTS -----")
+    print(f"Download Speed : {download:.2f} Mbps")
+    print(f"Upload Speed   : {upload:.2f} Mbps")
+    print(f"Ping           : {ping:.2f} ms")
+    print("---------------------------------------")
+
+if __name__ == "__main__":
+    test_speed()
