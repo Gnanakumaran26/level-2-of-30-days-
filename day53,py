@@ -1,0 +1,117 @@
+import tkinter as tk
+from tkinter import scrolledtext, messagebox
+from datetime import datetime
+
+# -------------------------------
+# Main Window
+# -------------------------------
+root = tk.Tk()
+root.title("Desktop Chat App")
+root.geometry("500x550")
+root.config(bg="#1e1e1e")
+
+# -------------------------------
+# Title
+# -------------------------------
+title = tk.Label(
+    root,
+    text="Desktop Chat Application",
+    font=("Arial", 16, "bold"),
+    bg="#1e1e1e",
+    fg="white"
+)
+title.pack(pady=10)
+
+# -------------------------------
+# Chat Area
+# -------------------------------
+chat_area = scrolledtext.ScrolledText(
+    root,
+    wrap=tk.WORD,
+    width=55,
+    height=20,
+    font=("Arial", 11)
+)
+chat_area.pack(padx=10, pady=10)
+chat_area.config(state=tk.DISABLED)
+
+# -------------------------------
+# Message Entry
+# -------------------------------
+message_entry = tk.Entry(
+    root,
+    font=("Arial", 12),
+    width=38
+)
+message_entry.pack(side=tk.LEFT, padx=10, pady=10)
+
+# -------------------------------
+# Functions
+# -------------------------------
+def send_message():
+    msg = message_entry.get()
+    if msg.strip() == "":
+        return
+
+    time = datetime.now().strftime("%H:%M")
+    chat_area.config(state=tk.NORMAL)
+    chat_area.insert(tk.END, f"You [{time}]: {msg}\n")
+    chat_area.config(state=tk.DISABLED)
+    chat_area.yview(tk.END)
+
+    message_entry.delete(0, tk.END)
+
+def save_chat():
+    content = chat_area.get("1.0", tk.END)
+    if content.strip() == "":
+        messagebox.showwarning("Warning", "Chat is empty!")
+        return
+
+    filename = f"chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    messagebox.showinfo("Saved", f"Chat saved as {filename}")
+
+def clear_chat():
+    chat_area.config(state=tk.NORMAL)
+    chat_area.delete("1.0", tk.END)
+    chat_area.config(state=tk.DISABLED)
+
+# -------------------------------
+# Buttons
+# -------------------------------
+button_frame = tk.Frame(root, bg="#1e1e1e")
+button_frame.pack(pady=10)
+
+send_btn = tk.Button(
+    button_frame,
+    text="Send",
+    width=10,
+    command=send_message
+)
+send_btn.grid(row=0, column=0, padx=5)
+
+save_btn = tk.Button(
+    button_frame,
+    text="Save Chat",
+    width=10,
+    command=save_chat
+)
+save_btn.grid(row=0, column=1, padx=5)
+
+clear_btn = tk.Button(
+    button_frame,
+    text="Clear",
+    width=10,
+    command=clear_chat
+)
+clear_btn.grid(row=0, column=2, padx=5)
+
+# Enter key shortcut
+root.bind("<Return>", lambda event: send_message())
+
+# -------------------------------
+# Start App
+# -------------------------------
+root.mainloop()
